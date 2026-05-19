@@ -1,0 +1,403 @@
+.celebrationOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.celebrationContent {
+  text-align: center;
+  padding: $spacing-xxl;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  opacity: 0;
+  transform: scale(0.8) translateY(20px);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: auto;
+  max-width: 90%;
+  width: 400px;
+  backdrop-filter: blur(10px);
+
+  &.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.iconWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto $spacing-xl;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: heartbeat 1s ease-in-out infinite;
+
+  &.pulse {
+    animation: heartbeat 0.8s ease-in-out infinite;
+  }
+}
+
+.iconSvg {
+  width: 40px;
+  height: 40px;
+  color: white;
+}
+
+.iconRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(255, 107, 107, 0.3);
+  border-radius: 50%;
+  animation: ring 2s ease-out infinite;
+}
+
+.iconRing2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border: 1px solid rgba(255, 142, 83, 0.2);
+  border-radius: 50%;
+  animation: ring 2s ease-out infinite 0.5s;
+}
+
+.iconRing3 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  border: 1px solid rgba(255, 142, 83, 0.1);
+  border-radius: 50%;
+  animation: ring 2s ease-out infinite 1s;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+@keyframes ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.celebrationTitle {
+  font-size: 36px;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: $spacing-sm;
+  font-family: $font-family-display;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+}
+
+.titleStar {
+  animation: twinkle 1s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.celebrationSubtitle {
+  font-size: 16px;
+  color: $text-secondary;
+  margin-bottom: $spacing-xl;
+}
+
+.messageCard {
+  max-width: 100%;
+  margin: 0 auto $spacing-xxl;
+  padding: $spacing-xxl $spacing-xl;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+}
+
+.message {
+  font-size: 28px;
+  font-family: $font-family-handwrite;
+  color: $text-primary;
+  line-height: 1.5;
+  margin: 0;
+  word-wrap: break-word;
+}
+
+.celebrationActions {
+  display: flex;
+  gap: $spacing-lg;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $radius-md;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all $transition-fast;
+  cursor: pointer;
+
+  &:hover {
+    background: $primary-dark;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.btnSecondary {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: transparent;
+  color: $text-primary;
+  border: 2px solid $border-color;
+  border-radius: $radius-md;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all $transition-fast;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+    transform: translateY(-2px);
+  }
+}
+
+.starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 994;
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkleStar 3s ease-in-out infinite;
+}
+
+@keyframes twinkleStar {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.floatingElements {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 995;
+}
+
+.floatingItem {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: float 3s ease-in-out infinite;
+}
+
+.floatingItem.heart {
+  animation: floatHeart 3s ease-in-out infinite;
+}
+
+.floatingItem.star {
+  animation: floatStar 4s ease-in-out infinite;
+}
+
+.floatingItem.sparkle {
+  animation: floatSparkle 2.5s ease-in-out infinite;
+}
+
+@keyframes floatHeart {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+  }
+}
+
+@keyframes floatStar {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-30px) rotate(360deg);
+  }
+}
+
+@keyframes floatSparkle {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) scale(1.2);
+  }
+}
+
+.confettiContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.confettiItem {
+  position: absolute;
+  border-radius: 2px;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.confettiItem.square {
+  border-radius: 3px;
+}
+
+.confettiItem.circle {
+  border-radius: 50%;
+}
+
+.confettiItem.ribbon {
+  border-radius: 2px;
+  transform-origin: center;
+  box-shadow: 0 0 6px currentColor;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+  }
+}
+
+@include respond-to('sm') {
+  .celebrationContent {
+    padding: $spacing-lg;
+    width: 95%;
+  }
+
+  .iconWrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .iconSvg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .iconRing {
+    width: 85px;
+    height: 85px;
+  }
+
+  .iconRing2 {
+    width: 100px;
+    height: 100px;
+  }
+
+  .iconRing3 {
+    width: 115px;
+    height: 115px;
+  }
+
+  .celebrationTitle {
+    font-size: 28px;
+    flex-wrap: wrap;
+  }
+
+  .message {
+    font-size: 22px;
+  }
+
+  .messageCard {
+    padding: $spacing-xl $spacing-lg;
+  }
+
+  .celebrationActions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

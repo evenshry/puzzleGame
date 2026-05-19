@@ -1,0 +1,323 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  text-align: center;
+  padding: $spacing-xxl $spacing-lg;
+  background: linear-gradient(180deg, rgba($primary-light, 0.3) 0%, transparent 100%);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.logoIcon {
+  width: 36px;
+  height: 36px;
+  color: $primary-color;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.logoText {
+  font-size: 32px;
+  font-weight: 700;
+  color: $text-primary;
+  font-family: $font-family-display;
+  margin: 0;
+}
+
+.tagline {
+  font-size: 14px;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.main {
+  flex: 1;
+  padding: 0 $spacing-lg $spacing-xxl;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.modeSelector {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-xs;
+  background: $bg-paper;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  margin: 0 auto $spacing-xl;
+  max-width: 400px;
+  width: 100%;
+  justify-content: center;
+}
+
+.modeBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-md;
+  border: none;
+  border-radius: $radius-sm;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-secondary;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    color: $text-primary;
+  }
+
+  &.modeBtnActive {
+    background: $primary-color;
+    color: white;
+  }
+}
+
+.solvePlaceholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: $spacing-xl;
+}
+
+.solveCard {
+  text-align: center;
+  background: $bg-paper;
+  border-radius: $radius-lg;
+  padding: $spacing-xxl;
+  box-shadow: $shadow-md;
+  max-width: 400px;
+  width: 100%;
+}
+
+.solveIconWrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto $spacing-lg;
+  background: linear-gradient(135deg, rgba($primary-color, 0.1), rgba($primary-light, 0.2));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.solveIcon {
+  width: 40px;
+  height: 40px;
+  color: $primary-color;
+}
+
+.solveTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.solveDesc {
+  font-size: 14px;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.qrPreview {
+  margin-top: $spacing-xl;
+  padding: $spacing-lg;
+  background: $bg-muted;
+  border-radius: $radius-md;
+}
+
+.qrLabel {
+  font-size: 14px;
+  color: $text-secondary;
+  margin-bottom: $spacing-md;
+}
+
+.qrImg {
+  width: 150px;
+  height: 150px;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-sm;
+}
+
+.scanBtn {
+  margin-top: $spacing-lg;
+  padding: $spacing-md $spacing-xl;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $radius-md;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $primary-dark;
+    transform: translateY(-1px);
+  }
+}
+
+.solveContainer {
+  background: $bg-paper;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+}
+
+.solveHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg $spacing-xl;
+  border-bottom: 1px solid $border-light;
+}
+
+.headerActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.solveHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: 18px;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+
+  svg {
+    color: $primary-color;
+  }
+}
+
+.backBtn {
+  padding: $spacing-sm $spacing-md;
+  background: transparent;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  color: $text-secondary;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
+.footer {
+  text-align: center;
+  padding: $spacing-xl;
+  font-size: 12px;
+  color: $text-muted;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xxl * 2;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.createBtn {
+  margin-top: $spacing-lg;
+  padding: $spacing-md $spacing-xl;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $radius-md;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $primary-dark;
+  }
+}
+
+@include respond-to('sm') {
+  .header {
+    padding: $spacing-xl $spacing-lg;
+  }
+
+  .logoText {
+    font-size: 26px;
+  }
+
+  .logoIcon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .modeSelector {
+    margin-bottom: $spacing-lg;
+  }
+
+  .solveCard {
+    padding: $spacing-xl;
+  }
+
+  .solveIconWrapper {
+    width: 64px;
+    height: 64px;
+  }
+
+  .solveIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .solveHeader {
+    flex-direction: column;
+    gap: $spacing-md;
+    align-items: flex-start;
+  }
+
+  .headerActions {
+    width: 100%;
+  }
+
+  .backBtn {
+    flex: 1;
+  }
+}

@@ -1,0 +1,299 @@
+.cropperOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: $spacing-lg;
+  box-sizing: border-box;
+}
+
+.cropperContainer {
+  background: white;
+  border-radius: $radius-lg;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cropperHeader {
+  padding: $spacing-lg $spacing-xl;
+  text-align: center;
+  border-bottom: 1px solid $border-color;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 $spacing-md 0;
+  }
+}
+
+.zoomControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+}
+
+.zoomBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  background: white;
+  color: $text-primary;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover:not(:disabled) {
+    background: $bg-muted;
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.resetBtn {
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  background: white;
+  color: $text-primary;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $bg-muted;
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
+.zoomLabel {
+  font-size: 14px;
+  color: $text-secondary;
+  min-width: 50px;
+  text-align: center;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  cursor: grab;
+  background: #000;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.previewImage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.darkOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.cropArea {
+  position: absolute;
+  border: 2px solid white;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  cursor: move;
+  z-index: 10;
+}
+
+.cropBorder {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.resizeHandle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 2px solid $primary-color;
+  border-radius: 4px;
+  cursor: nwse-resize;
+  z-index: 20;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $primary-color;
+    transform: scale(1.2);
+  }
+}
+
+.topLeft {
+  top: -10px;
+  left: -10px;
+  cursor: nwse-resize;
+}
+
+.topRight {
+  top: -10px;
+  right: -10px;
+  cursor: nesw-resize;
+}
+
+.bottomLeft {
+  bottom: -10px;
+  left: -10px;
+  cursor: nesw-resize;
+}
+
+.bottomRight {
+  bottom: -10px;
+  right: -10px;
+  cursor: nwse-resize;
+}
+
+.centerLineH,
+.centerLineV {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.centerLineH {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.centerLineV {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+.dragHint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  pointer-events: none;
+
+  svg {
+    opacity: 0.8;
+  }
+
+  span {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+}
+
+.tips {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm;
+  background: $bg-muted;
+  color: $text-secondary;
+  font-size: 12px;
+
+  svg {
+    opacity: 0.7;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-lg $spacing-xl;
+  border-top: 1px solid $border-color;
+}
+
+.cancelBtn,
+.confirmBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-fast;
+}
+
+.cancelBtn {
+  background: $bg-muted;
+  border: 1px solid $border-color;
+  color: $text-primary;
+
+  &:hover {
+    background: darken($bg-muted, 5%);
+  }
+}
+
+.confirmBtn {
+  background: $primary-color;
+  border: none;
+  color: white;
+
+  &:hover {
+    background: $primary-dark;
+  }
+}
+
+@include respond-to('sm') {
+  .cropperContainer {
+    max-height: 95vh;
+  }
+
+  .imageContainer {
+    height: 300px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}

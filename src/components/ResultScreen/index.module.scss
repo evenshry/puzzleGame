@@ -1,0 +1,293 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($bg-color, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-celebration;
+  overflow: hidden;
+}
+
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  animation: float 3s ease-out forwards;
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+.heart {
+  clip-path: path('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(0);
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(720deg) scale(1);
+    opacity: 0;
+  }
+}
+
+.content {
+  text-align: center;
+  padding: $spacing-xl;
+  opacity: 0;
+  transform: scale(0.8) translateY(20px);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.iconWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto $spacing-xl;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, $primary-color, $primary-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: heartbeat 1s ease-in-out infinite;
+}
+
+.iconSvg {
+  width: 40px;
+  height: 40px;
+  color: white;
+}
+
+.iconRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba($primary-color, 0.3);
+  border-radius: 50%;
+  animation: ring 2s ease-out infinite;
+}
+
+.iconRing2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border: 1px solid rgba($primary-color, 0.2);
+  border-radius: 50%;
+  animation: ring 2s ease-out infinite 0.5s;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: $spacing-sm;
+  font-family: $font-family-display;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: $text-secondary;
+  margin-bottom: $spacing-xl;
+}
+
+.messageCard {
+  max-width: 400px;
+  margin: 0 auto $spacing-xxl;
+  padding: $spacing-xxl $spacing-xl;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+}
+
+.message {
+  font-size: 28px;
+  font-family: $font-family-handwrite;
+  color: $text-primary;
+  line-height: 1.5;
+  margin: 0;
+  word-wrap: break-word;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-lg;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $radius-md;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $primary-dark;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.btnSecondary {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: transparent;
+  color: $text-primary;
+  border: 2px solid $border-color;
+  border-radius: $radius-md;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+    transform: translateY(-2px);
+  }
+}
+
+.btnSave {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: $success-color;
+  color: white;
+  border: none;
+  border-radius: $radius-md;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: darken($success-color, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+.savedHint {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-md $spacing-xl;
+  font-size: 14px;
+  color: $success-color;
+}
+
+@include respond-to('sm') {
+  .content {
+    padding: $spacing-lg;
+  }
+
+  .iconWrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .iconSvg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .iconRing {
+    width: 85px;
+    height: 85px;
+  }
+
+  .iconRing2 {
+    width: 100px;
+    height: 100px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .message {
+    font-size: 22px;
+  }
+
+  .messageCard {
+    padding: $spacing-xl $spacing-lg;
+  }
+
+  .actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

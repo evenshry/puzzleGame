@@ -1,0 +1,101 @@
+$primary-color: #E91E8C;
+$primary-dark: #C71585;
+$primary-light: #F8BBD9;
+
+$secondary-color: #FFC107;
+$success-color: #4CAF50;
+$error-color: #FF4D4F;
+
+$bg-color: #FDF8F0;
+$bg-paper: #FFFFFF;
+$bg-muted: #F5F5F5;
+
+$text-primary: #333333;
+$text-secondary: #666666;
+$text-muted: #999999;
+
+$border-color: #E8E8E8;
+$border-light: #F0F0F0;
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 20px;
+$radius-full: 9999px;
+
+$font-family-display: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-family-handwrite: 'Caveat', cursive;
+
+$transition-fast: 150ms ease;
+$transition-normal: 250ms ease;
+$transition-slow: 400ms ease;
+
+$z-dropdown: 100;
+$z-modal: 1000;
+$z-celebration: 2000;
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+$spacing-xxl: 32px;
+
+$preset-colors: (
+  'pink-light': #FFE4E1,
+  'pink': #FFB6C1,
+  'pink-warm': #FFC0CB,
+  'purple-light': #E6E6FA,
+  'purple': #DDA0DD,
+  'purple-bright': #EE82EE,
+  'blue-light': #B0E0E6,
+  'blue': #87CEEB,
+  'blue-sky': #87CEFA,
+  'green-light': #98FB98,
+  'green': #90EE90,
+  'green-mint': #00FA9A,
+  'yellow-light': #FFFACD,
+  'yellow-warm': #FAFAD2,
+  'orange-light': #FFE4B5,
+  'peach': #FFDAB9,
+);
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin text-ellipsis($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == 'sm' {
+    @media (max-width: 576px) { @content; }
+  } @else if $breakpoint == 'md' {
+    @media (max-width: 768px) { @content; }
+  } @else if $breakpoint == 'lg' {
+    @media (max-width: 1024px) { @content; }
+  } @else if $breakpoint == 'xl' {
+    @media (max-width: 1200px) { @content; }
+  }
+}
