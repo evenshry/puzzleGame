@@ -5,37 +5,42 @@ import { ListPage } from '../pages/ListPage';
 import { ResultPage } from '../pages/ResultPage';
 import { EditPage } from '../pages/EditPage';
 
-export const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Navigate to="/create" replace />,
-    errorElement: <ErrorFallback />,
-  },
-  {
-    path: '/create',
-    element: <HomePage />,
-  },
-  {
-    path: '/edit/:id',
-    element: <EditPage />,
-  },
-  {
-    path: '/play',
-    element: <PlayPage />,
-  },
-  {
-    path: '/play/:id',
-    element: <PlayPage />,
-  },
-  {
-    path: '/list',
-    element: <ListPage />,
-  },
-  {
-    path: '/result',
-    element: <ResultPage />,
-  },
-]);
+const basename = import.meta.env.PROD ? '/puzzleGame' : '/';
+
+export const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <Navigate to="/create" replace />,
+      errorElement: <ErrorFallback />,
+    },
+    {
+      path: '/create',
+      element: <HomePage />,
+    },
+    {
+      path: '/edit/:id',
+      element: <EditPage />,
+    },
+    {
+      path: '/play',
+      element: <PlayPage />,
+    },
+    {
+      path: '/play/:id',
+      element: <PlayPage />,
+    },
+    {
+      path: '/list',
+      element: <ListPage />,
+    },
+    {
+      path: '/result',
+      element: <ResultPage />,
+    },
+  ],
+  { basename }
+);
 
 function ErrorFallback() {
   return (
@@ -52,7 +57,7 @@ function ErrorFallback() {
       <h1>出错了</h1>
       <p>页面不存在或发生了错误</p>
       <button
-        onClick={() => window.location.href = '/create'}
+        onClick={() => window.location.href = `${basename}/create`}
         style={{
           padding: '0.75rem 1.5rem',
           backgroundColor: '#1677ff',
