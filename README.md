@@ -153,18 +153,18 @@ VITE_API_BASE_URL=your_api_url
 
 1. 在 GitHub 仓库的 Settings → Pages 中，设置 Source 为 `GitHub Actions`
 2. 推送代码到 `main` 分支，GitHub Actions 会自动运行部署流程
-3. 部署完成后，访问 `https://<your-username>.github.io/puzzle-game/`
+3. 部署完成后，访问 `https://<your-username>.github.io/puzzleGame/`
 
 **部署工作流配置：**
 
 - 文件位置：`.github/workflows/deploy.yml`
 - 触发条件：`main` 分支 push 事件或手动触发
-- 构建命令：`yarn build`
+- 构建命令：`yarn build --mode deploy`
 - 部署目标：GitHub Pages
 
 **注意事项：**
 
-- `vite.config.ts` 中的 `base` 配置为 `/puzzle-game/`，需根据实际仓库名称调整
+- `vite.config.ts` 中的 `base` 配置为 `/puzzleGame/`（根据实际仓库名称调整）
 - 确保 GitHub Pages 权限已正确配置（Settings → Actions → General → Workflow permissions）
 
 ### 手动部署

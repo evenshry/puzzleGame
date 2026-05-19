@@ -6,7 +6,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     root: "./",
-    base: mode == "deploy" ? "/puzzle-game/" : "./",
+    base: mode == "deploy" ? "/puzzleGame/" : "./",
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
