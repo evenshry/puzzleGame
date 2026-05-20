@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 import PuzzleBoard from '@/components/PuzzleBoard';
 import Layout from '@/components/Layout';
 import { useAppStore } from '@/store/appStore';
@@ -17,27 +17,37 @@ export function PlayPage() {
   const puzzleConfig = useAppStore(state => state.puzzleConfig);
   const challengeIdRef = useRef<string | null>(null);
   const startTimeRef = useRef<number>(0);
-  const isLoading = useRef(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    if (isLoading.current) return;
+    if (isLoading) return;
     
     if (id) {
-      isLoading.current = true;
+      setIsLoading(true);
+      setHasError(false);
       const loadAndStart = async () => {
-        const savedPuzzle = await getPuzzleById(id);
-        if (savedPuzzle) {
-          const data = await generatePuzzleAsync(savedPuzzle.config, false);
-          setPuzzleData(data);
-          setPuzzleConfig(savedPuzzle.config);
-          
-          const challenge = await startChallenge(id);
-          if (challenge) {
-            challengeIdRef.current = challenge.id;
-            startTimeRef.current = Date.now();
+        try {
+          const savedPuzzle = await getPuzzleById(id);
+          if (savedPuzzle) {
+            const data = await generatePuzzleAsync(savedPuzzle.config, false);
+            setPuzzleData(data);
+            setPuzzleConfig(savedPuzzle.config);
+            
+            const challenge = await startChallenge(id);
+            if (challenge) {
+              challengeIdRef.current = challenge.id;
+              startTimeRef.current = Date.now();
+            }
+          } else {
+            setHasError(true);
           }
+        } catch (error) {
+          console.error('Failed to load puzzle:', error);
+          setHasError(true);
+        } finally {
+          setIsLoading(false);
         }
-        isLoading.current = false;
       };
       loadAndStart();
       return;
@@ -47,7 +57,8 @@ export function PlayPage() {
     const shareData = hashParams.get('share');
     
     if (shareData) {
-      isLoading.current = true;
+      setIsLoading(true);
+      setHasError(false);
       const loadFromShare = async () => {
         try {
           let base64Decoded = atob(shareData);
@@ -64,8 +75,10 @@ export function PlayPage() {
           startTimeRef.current = Date.now();
         } catch (error) {
           console.error('Failed to parse share data:', error);
+          setHasError(true);
+        } finally {
+          setIsLoading(false);
         }
-        isLoading.current = false;
       };
       loadFromShare();
       return;
@@ -90,6 +103,31 @@ export function PlayPage() {
   const handleCreateNew = useCallback(() => {
     navigate('/create');
   }, [navigate]);
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className={styles.emptyState}>
+          <Loader2 size={64} className={styles.spinner} />
+          <p>正在准备拼图...</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <Layout>
+        <div className={styles.emptyState}>
+          <Sparkles size={64} />
+          <p>拼图加载失败</p>
+          <button className={styles.createBtn} onClick={handleCreateNew}>
+            去制作一个
+          </button>
+        </div>
+      </Layout>
+    );
+  }
 
   if (!puzzleData) {
     return (
