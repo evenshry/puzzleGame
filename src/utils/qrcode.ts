@@ -46,9 +46,10 @@ const validatePuzzleConfig = (data: unknown): data is PuzzleConfig => {
 export const generateShareURL = (config: PuzzleConfig): string => {
   try {
     const data = JSON.stringify(config);
-    const encodedData = btoa(encodeURIComponent(data));
+    const encodedData = btoa(data);
     const baseURL = window.location.origin;
-    return `${baseURL}?puzzle=${encodedData}`;
+    const basePath = import.meta.env.PROD ? '/puzzleGame' : '';
+    return `${baseURL}${basePath}/play?share=${encodedData}`;
   } catch (error) {
     console.error('Failed to generate share URL:', error);
     throw new Error('分享链接生成失败');
