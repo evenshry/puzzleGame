@@ -13,8 +13,8 @@ const QR_CODE_CONFIG = {
 
 export const generateQRCode = async (config: PuzzleConfig): Promise<string> => {
   try {
-    const data = JSON.stringify(config);
-    const dataUrl = await QRCode.toDataURL(data, QR_CODE_CONFIG);
+    const shareURL = generateShareURL(config);
+    const dataUrl = await QRCode.toDataURL(shareURL, QR_CODE_CONFIG);
     return dataUrl;
   } catch (error) {
     console.error('Failed to generate QR code:', error);
