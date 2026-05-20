@@ -4,8 +4,8 @@ import { Sparkles, Loader2 } from 'lucide-react';
 import PuzzleBoard from '@/components/PuzzleBoard';
 import Layout from '@/components/Layout';
 import { useAppStore } from '@/store/appStore';
-import { generatePuzzleAsync } from '@/utils/puzzle';
-import { getPuzzleById, startChallenge, completeChallenge } from '@/utils/storage';
+import { generatePuzzleAsync, generateThumbnail } from '@/utils/puzzle';
+import { getPuzzleById, startChallenge, completeChallenge, startChallengeWithConfig, updateChallengeStartTime } from '@/utils/storage';
 import styles from '@/App.module.scss';
 
 export function PlayPage() {
@@ -70,9 +70,27 @@ export function PlayPage() {
           
           const config = JSON.parse(jsonString);
           const data = await generatePuzzleAsync(config, false);
+          
+          // 在生成拼图后立即记录开始时间
+          const gameStartTime = Date.now();
+          startTimeRef.current = gameStartTime;
+          
+          // 后台保存挑战记录和缩略图
+          const thumbnail = await generateThumbnail(config);
+          const challenge = await startChallengeWithConfig(
+            config, 
+            thumbnail, 
+            config.text || '分享的拼图'
+          );
+          
+          if (challenge) {
+            challengeIdRef.current = challenge.id;
+            // 更新挑战记录的开始时间为实际开始时间
+            await updateChallengeStartTime(challenge.id, gameStartTime);
+          }
+          
           setPuzzleData(data);
           setPuzzleConfig(config);
-          startTimeRef.current = Date.now();
         } catch (error) {
           console.error('Failed to parse share data:', error);
           setHasError(true);

@@ -512,6 +512,30 @@ export const CELEBRATION_COLORS = [
   '#E6E6FA',
 ];
 
+export const generateThumbnail = async (config: PuzzleConfig): Promise<string> => {
+  try {
+    const fullImageCanvas = await createFullImageCanvasAsync(config);
+    const thumbSize = 200;
+    const thumbnailCanvas = document.createElement('canvas');
+    thumbnailCanvas.width = thumbSize;
+    thumbnailCanvas.height = thumbSize;
+    const ctx = thumbnailCanvas.getContext('2d')!;
+
+    ctx.drawImage(fullImageCanvas, 0, 0, thumbSize, thumbSize);
+    return thumbnailCanvas.toDataURL('image/jpeg', 0.8);
+  } catch (error) {
+    console.error('Failed to generate thumbnail:', error);
+    // 回退到简单的背景色
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 200;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = config.backgroundColor;
+    ctx.fillRect(0, 0, 200, 200);
+    return canvas.toDataURL('image/jpeg', 0.8);
+  }
+};
+
 export const PRESET_TEXT_COLORS = [
   '#2a2a2a',
   '#1a1a1a',

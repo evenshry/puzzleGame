@@ -159,6 +159,32 @@ export const startChallenge = async (puzzleId: string): Promise<ChallengeRecord 
   return newRecord;
 };
 
+export const startChallengeWithConfig = async (config: PuzzleConfig, thumbnail: string, name?: string): Promise<ChallengeRecord | null> => {
+  try {
+    // 先保存拼图
+    const savedPuzzle = await savePuzzle(config, thumbnail, name);
+    
+    const id = `challenge_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    
+    const newRecord: ChallengeRecord = {
+      id,
+      puzzleId: savedPuzzle.id,
+      config,
+      thumbnail,
+      puzzleName: savedPuzzle.name,
+      startedAt: Date.now(),
+      isCompleted: false,
+    };
+
+    await indexedDBManager.set(STORE_CHALLENGES, newRecord);
+    
+    return newRecord;
+  } catch (error) {
+    console.error('Failed to start challenge from config:', error);
+    return null;
+  }
+};
+
 export const completeChallenge = async (challengeId: string, duration: number): Promise<boolean> => {
   try {
     const record = await getChallengeById(challengeId);
@@ -193,6 +219,23 @@ export const deleteChallenge = async (id: string): Promise<boolean> => {
     if (!record) return false;
 
     await indexedDBManager.remove(STORE_CHALLENGES, id);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const updateChallengeStartTime = async (id: string, startTime: number): Promise<boolean> => {
+  try {
+    const record = await getChallengeById(id);
+    if (!record) return false;
+
+    const updatedRecord: ChallengeRecord = {
+      ...record,
+      startedAt: startTime,
+    };
+
+    await indexedDBManager.set(STORE_CHALLENGES, updatedRecord);
     return true;
   } catch {
     return false;
