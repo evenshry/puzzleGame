@@ -5,7 +5,7 @@ import { ListPage } from '../pages/ListPage';
 import { ResultPage } from '../pages/ResultPage';
 import { EditPage } from '../pages/EditPage';
 
-const basename = import.meta.env.PROD ? '/puzzleGame' : '/';
+const basePath = import.meta.env.PROD ? '/puzzleGame' : '';
 
 export const router = createHashRouter(
   [
@@ -38,8 +38,7 @@ export const router = createHashRouter(
       path: '/result',
       element: <ResultPage />,
     },
-  ],
-  { basename }
+  ]
 );
 
 function ErrorFallback() {
@@ -57,7 +56,7 @@ function ErrorFallback() {
       <h1>出错了</h1>
       <p>页面不存在或发生了错误</p>
       <button
-        onClick={() => window.location.href = `${basename}#/create`}
+        onClick={() => window.location.href = `${basePath}/#/create`}
         style={{
           padding: '0.75rem 1.5rem',
           backgroundColor: '#1677ff',
