@@ -1,7 +1,17 @@
-import { PuzzleConfig, PuzzlePiece, PuzzleSlot, PuzzleData } from '@/types';
+import { PuzzleConfig, PuzzlePiece, PuzzleSlot, PuzzleData, BackgroundImageOption } from '@/types';
 
 const CANVAS_SIZE = 400;
 const PIECE_GAP = 10;
+
+export const BACKGROUND_IMAGE_MAP: Record<Exclude<BackgroundImageOption, 'custom'>, string> = {
+  heart1: 'background/heart1.jpg',
+  heart2: 'background/heart2.jpg',
+};
+
+export const getBackgroundImagePath = (option: BackgroundImageOption): string | undefined => {
+  if (option === 'custom') return undefined;
+  return BACKGROUND_IMAGE_MAP[option];
+};
 
 export interface PieceLayoutConfig {
   id: number;
@@ -40,6 +50,43 @@ export const generatePuzzle = (config: PuzzleConfig, autoShuffle: boolean = true
   };
 };
 
+export const generatePuzzleAsync = async (config: PuzzleConfig, autoShuffle: boolean = true): Promise<PuzzleData> => {
+  const gridSize = Math.sqrt(config.difficulty);
+  const pieceSize = CANVAS_SIZE / gridSize;
+
+  const fullImageCanvas = await createFullImageCanvasAsync(config);
+  
+  const pieceLayouts = generatePieceLayouts(gridSize, pieceSize);
+  
+  const pieces = generatePieceImages(
+    fullImageCanvas,
+    gridSize,
+    pieceSize,
+    pieceLayouts,
+    config.backgroundColor
+  );
+  
+  const slots = createPuzzleSlots(gridSize, pieceSize);
+
+  if (autoShuffle) {
+    shufflePieces(pieces, gridSize, pieceSize);
+  }
+
+  return {
+    config,
+    pieces,
+    slots,
+    gridSize,
+  };
+};
+
+const getBackgroundImageSrc = (config: PuzzleConfig): string | undefined => {
+  if (config.backgroundImageOption && config.backgroundImageOption !== 'custom') {
+    return BACKGROUND_IMAGE_MAP[config.backgroundImageOption];
+  }
+  return config.backgroundImage;
+};
+
 const createFullImageCanvas = (config: PuzzleConfig): HTMLCanvasElement => {
   const canvas = document.createElement('canvas');
   canvas.width = CANVAS_SIZE;
@@ -49,8 +96,9 @@ const createFullImageCanvas = (config: PuzzleConfig): HTMLCanvasElement => {
   ctx.fillStyle = config.backgroundColor;
   ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-  if (config.backgroundImage) {
-    drawBackgroundImage(ctx, config.backgroundImage, config.text);
+  const backgroundImageSrc = getBackgroundImageSrc(config);
+  if (backgroundImageSrc) {
+    drawBackgroundImageSync(ctx, backgroundImageSrc, config.text);
   }
 
   drawText(ctx, config.text, config.textColor);
@@ -58,18 +106,72 @@ const createFullImageCanvas = (config: PuzzleConfig): HTMLCanvasElement => {
   return canvas;
 };
 
-const drawBackgroundImage = (ctx: CanvasRenderingContext2D, imageData: string, text: string): void => {
+const createFullImageCanvasAsync = async (config: PuzzleConfig): Promise<HTMLCanvasElement> => {
+  const canvas = document.createElement('canvas');
+  canvas.width = CANVAS_SIZE;
+  canvas.height = CANVAS_SIZE;
+  const ctx = canvas.getContext('2d')!;
+
+  ctx.fillStyle = config.backgroundColor;
+  ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+  const backgroundImageSrc = getBackgroundImageSrc(config);
+  if (backgroundImageSrc) {
+    await drawBackgroundImageAsync(ctx, backgroundImageSrc, config.text);
+  }
+
+  drawText(ctx, config.text, config.textColor);
+
+  return canvas;
+};
+
+const drawBackgroundImageSync = (ctx: CanvasRenderingContext2D, imageData: string, text: string): void => {
   const img = new Image();
-  img.src = imageData;
+  img.crossOrigin = 'anonymous';
+  
   if (img.complete) {
-    if (text && text.trim()) {
-      ctx.globalAlpha = 0.25;
-    } else {
-      ctx.globalAlpha = 1;
-    }
-    ctx.drawImage(img, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    drawImageToCanvas(ctx, img, text);
+    return;
+  }
+  
+  img.onload = () => {
+    drawImageToCanvas(ctx, img, text);
+  };
+  
+  img.onerror = () => {
+    console.warn('Failed to load background image:', imageData);
+  };
+  
+  img.src = imageData;
+};
+
+const drawBackgroundImageAsync = (ctx: CanvasRenderingContext2D, imageData: string, text: string): Promise<void> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = () => {
+      drawImageToCanvas(ctx, img, text);
+      resolve();
+    };
+    
+    img.onerror = () => {
+      console.warn('Failed to load background image:', imageData);
+      resolve();
+    };
+    
+    img.src = imageData;
+  });
+};
+
+const drawImageToCanvas = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, text: string): void => {
+  if (text && text.trim()) {
+    ctx.globalAlpha = 0.25;
+  } else {
     ctx.globalAlpha = 1;
   }
+  ctx.drawImage(img, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  ctx.globalAlpha = 1;
 };
 
 const drawText = (ctx: CanvasRenderingContext2D, text: string, textColor: string = '#2a2a2a'): void => {

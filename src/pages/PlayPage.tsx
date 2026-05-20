@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-react';
 import PuzzleBoard from '@/components/PuzzleBoard';
 import Layout from '@/components/Layout';
 import { useAppStore } from '@/store/appStore';
-import { generatePuzzle } from '@/utils/puzzle';
+import { generatePuzzleAsync } from '@/utils/puzzle';
 import { getPuzzleById, startChallenge, completeChallenge } from '@/utils/storage';
 import styles from '@/App.module.scss';
 
@@ -17,15 +17,17 @@ export function PlayPage() {
   const puzzleConfig = useAppStore(state => state.puzzleConfig);
   const challengeIdRef = useRef<string | null>(null);
   const startTimeRef = useRef<number>(0);
+  const isLoading = useRef(false);
 
   useEffect(() => {
-    if (puzzleData) return;
-
+    if (isLoading.current) return;
+    
     if (id) {
+      isLoading.current = true;
       const loadAndStart = async () => {
         const savedPuzzle = await getPuzzleById(id);
         if (savedPuzzle) {
-          const data = generatePuzzle(savedPuzzle.config, false);
+          const data = await generatePuzzleAsync(savedPuzzle.config, false);
           setPuzzleData(data);
           setPuzzleConfig(savedPuzzle.config);
           
@@ -35,25 +37,40 @@ export function PlayPage() {
             startTimeRef.current = Date.now();
           }
         }
+        isLoading.current = false;
       };
       loadAndStart();
       return;
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const shareData = urlParams.get('share');
+    const hashParams = new URLSearchParams(window.location.hash.split('?')[1]);
+    const shareData = hashParams.get('share');
+    
     if (shareData) {
-      try {
-        const config = JSON.parse(atob(shareData));
-        const data = generatePuzzle(config, false);
-        setPuzzleData(data);
-        setPuzzleConfig(config);
-        startTimeRef.current = Date.now();
-      } catch (error) {
-        console.error('Failed to parse share data:', error);
-      }
+      isLoading.current = true;
+      const loadFromShare = async () => {
+        try {
+          let base64Decoded = atob(shareData);
+          let jsonString = base64Decoded;
+          
+          if (base64Decoded.includes('%')) {
+            jsonString = decodeURIComponent(base64Decoded);
+          }
+          
+          const config = JSON.parse(jsonString);
+          const data = await generatePuzzleAsync(config, false);
+          setPuzzleData(data);
+          setPuzzleConfig(config);
+          startTimeRef.current = Date.now();
+        } catch (error) {
+          console.error('Failed to parse share data:', error);
+        }
+        isLoading.current = false;
+      };
+      loadFromShare();
+      return;
     }
-  }, [id, puzzleData, setPuzzleData, setPuzzleConfig]);
+  }, [id, setPuzzleData, setPuzzleConfig]);
 
   const handleComplete = useCallback(async () => {
     if (challengeIdRef.current) {
@@ -62,9 +79,9 @@ export function PlayPage() {
     }
   }, []);
 
-  const handleRestart = useCallback(() => {
+  const handleRestart = useCallback(async () => {
     if (puzzleConfig) {
-      const data = generatePuzzle(puzzleConfig);
+      const data = await generatePuzzleAsync(puzzleConfig);
       setPuzzleData(data);
       startTimeRef.current = Date.now();
     }

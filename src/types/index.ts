@@ -1,10 +1,13 @@
 export type Difficulty = 4 | 9 | 16 | 25 | 36;
 
+export type BackgroundImageOption = 'heart1' | 'heart2' | 'custom';
+
 export interface PuzzleConfig {
   text: string;
   difficulty: Difficulty;
   backgroundColor: string;
   backgroundImage?: string;
+  backgroundImageOption?: BackgroundImageOption;
   textColor?: string;
 }
 

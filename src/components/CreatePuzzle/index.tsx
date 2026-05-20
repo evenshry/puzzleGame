@@ -1,14 +1,15 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Heart, Palette, Sparkles, Image as ImageIcon, Eye, Type, FileImage, Copy, Check, Share2 } from "lucide-react";
-import { Difficulty, PuzzleConfig, PuzzleData } from "@/types";
+import { Heart, Palette, Sparkles, Image as ImageIcon, Eye, Type, FileImage, Copy, Check, Share2, X } from "lucide-react";
+import { Difficulty, PuzzleConfig, PuzzleData, BackgroundImageOption } from "@/types";
 import {
-  generatePuzzle,
+  generatePuzzleAsync,
   PRESET_COLORS,
   getRandomColor,
   DIFFICULTY_OPTIONS,
   CANVAS_CONFIG,
   PRESET_TEXT_COLORS,
   getRandomTextColor,
+  BACKGROUND_IMAGE_MAP,
 } from "@/utils/puzzle";
 import { compressImage, generateQRCode, generateShareURL } from "@/utils/qrcode";
 import { savePuzzle } from "@/utils/storage";
@@ -34,6 +35,7 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
   const [backgroundColor, setBackgroundColor] = useState(PRESET_COLORS[0]);
   const [textColor, setTextColor] = useState("#2a2a2a");
   const [backgroundImage, setBackgroundImage] = useState<string>("");
+  const [backgroundImageOption, setBackgroundImageOption] = useState<BackgroundImageOption | "">("");
   const [uploadedImage, setUploadedImage] = useState<string>("");
   const [originalImage, setOriginalImage] = useState<string>("");
   const [tempImage, setTempImage] = useState<string>("");
@@ -53,24 +55,36 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
+  const getPreviewBackgroundImage = (): string | undefined => {
+    if (backgroundImageOption && backgroundImageOption !== "custom") {
+      return BACKGROUND_IMAGE_MAP[backgroundImageOption];
+    }
+    return backgroundImage || undefined;
+  };
+
   useEffect(() => {
     if (mode === "text") {
+      const previewBgImage = getPreviewBackgroundImage();
       const config: PuzzleConfig = {
         text: text.trim() || "预览效果",
         difficulty,
         backgroundColor,
         textColor,
-        backgroundImage: backgroundImage || undefined,
+        backgroundImage: previewBgImage,
+        backgroundImageOption: backgroundImageOption || undefined,
       };
 
-      if (backgroundImage) {
+      if (previewBgImage) {
         const img = new Image();
-        img.crossOrigin = "anonymous";
         img.onload = () => {
           const preview = generatePreviewWithImage(config, img);
           setPreviewImage(preview);
         };
-        img.src = backgroundImage;
+        img.onerror = () => {
+          const preview = generatePreview(config);
+          setPreviewImage(preview);
+        };
+        img.src = previewBgImage;
       } else {
         const preview = generatePreview(config);
         setPreviewImage(preview);
@@ -83,7 +97,7 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
         setPreviewImage(preview);
       }
     }
-  }, [mode, text, difficulty, backgroundColor, textColor, backgroundImage, uploadedImage]);
+  }, [mode, text, difficulty, backgroundColor, textColor, backgroundImage, uploadedImage, backgroundImageOption]);
 
   const generateImageModePreview = (difficulty: Difficulty): string => {
     const canvas = document.createElement("canvas");
@@ -393,6 +407,7 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
       } else {
         setText("");
         setBackgroundImage("");
+        setBackgroundImageOption("");
         setBackgroundColor(PRESET_COLORS[0]);
         setTextColor("#2a2a2a");
       }
@@ -475,6 +490,7 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
         try {
           const compressed = await compressImage(file, CANVAS_CONFIG.SIZE, CANVAS_CONFIG.SIZE, 0.5);
           setBackgroundImage(compressed);
+          setBackgroundImageOption("custom");
         } catch {
           showToast("图片处理失败，请重试", "error");
         }
@@ -483,8 +499,16 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
     [showToast],
   );
 
+  const handleBackgroundImageOptionChange = useCallback((option: BackgroundImageOption | "") => {
+    setBackgroundImageOption(option);
+    if (option !== "custom") {
+      setBackgroundImage("");
+    }
+  }, []);
+
   const removeImage = useCallback(() => {
     setBackgroundImage("");
+    setBackgroundImageOption("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -509,10 +533,11 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
         difficulty,
         backgroundColor: mode === "text" ? backgroundColor : "#ffffff",
         textColor,
-        backgroundImage: mode === "text" ? backgroundImage || undefined : uploadedImage,
+        backgroundImage: (mode === "text" && backgroundImageOption === "custom") ? backgroundImage : (mode === "image" ? uploadedImage : undefined),
+        backgroundImageOption: mode === "text" ? (backgroundImageOption || undefined) : undefined,
       };
 
-      const newPuzzleData = generatePuzzle(config, true);
+      const newPuzzleData = await generatePuzzleAsync(config, true);
 
       if (mode === "text") {
         const qrCodeData = await generateQRCode(newPuzzleData.config);
@@ -721,26 +746,48 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
                       <ImageIcon size={16} />
                       <span className={styles.labelText}>背景图片（可选）</span>
                     </label>
-                    {!backgroundImage ? (
-                      <label className={styles.uploadBtn}>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleBackgroundImageUpload}
-                          className={styles.uploadInput}
-                        />
-                        <ImageIcon size={20} />
-                        <span>选择背景图片</span>
-                      </label>
-                    ) : (
-                      <div className={styles.imagePreview}>
-                        <img src={backgroundImage} alt="背景预览" className={styles.previewImg} />
-                        <button className={styles.removeImageBtn} onClick={removeImage}>
-                          移除
+                    <div className={styles.backgroundOptions}>
+                      <button
+                        className={`${styles.backgroundOptionBtn} ${!backgroundImageOption ? styles.backgroundOptionActive : ""}`}
+                        onClick={() => handleBackgroundImageOptionChange("")}
+                      >
+                        <span className={styles.backgroundOptionNone}>无</span>
+                      </button>
+                      {Object.entries(BACKGROUND_IMAGE_MAP).map(([key, path]) => (
+                        <button
+                          key={key}
+                          className={`${styles.backgroundOptionBtn} ${backgroundImageOption === key ? styles.backgroundOptionActive : ""}`}
+                          onClick={() => handleBackgroundImageOptionChange(key as BackgroundImageOption)}
+                        >
+                          <img src={path} alt={key} className={styles.backgroundOptionImg} />
+                        </button>
+                      ))}
+                      <button
+                        className={`${styles.backgroundOptionBtn} ${styles.backgroundOptionCustom} ${backgroundImageOption === "custom" ? styles.backgroundOptionActive : ""}`}
+                        onClick={() => {
+                          fileInputRef.current?.click();
+                        }}
+                      >
+                        <ImageIcon size={16} />
+                        <span>自定义</span>
+                      </button>
+                    </div>
+                    {(backgroundImageOption === "custom" && backgroundImage) && (
+                      <div className={styles.customImagePreview}>
+                        <img src={backgroundImage} alt="自定义背景" className={styles.previewImg} />
+                        <button className={styles.removeCustomBtn} onClick={removeImage}>
+                          <X size={14} />
                         </button>
                       </div>
                     )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBackgroundImageUpload}
+                      className={styles.uploadInput}
+                      style={{ display: "none" }}
+                    />
                   </div>
                 </>
               )}

@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-react';
 import ResultScreen from '@/components/ResultScreen';
 import Layout from '@/components/Layout';
 import { useAppStore } from '@/store/appStore';
-import { generatePuzzle } from '@/utils/puzzle';
+import { generatePuzzleAsync } from '@/utils/puzzle';
 import styles from '@/App.module.scss';
 
 const CURRENT_PUZZLE_ID_KEY = 'current-puzzle-id';
@@ -26,9 +26,9 @@ export function ResultPage() {
     }
   }, []);
 
-  const handleRestart = useCallback(() => {
+  const handleRestart = useCallback(async () => {
     if (puzzleConfig) {
-      const data = generatePuzzle(puzzleConfig);
+      const data = await generatePuzzleAsync(puzzleConfig);
       setPuzzleData(data);
       if (puzzleId) {
         navigate(`/play/${puzzleId}`);
