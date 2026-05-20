@@ -159,7 +159,7 @@ VITE_API_BASE_URL=your_api_url
 
 - 文件位置：`.github/workflows/deploy.yml`
 - 触发条件：`main` 分支 push 事件或手动触发
-- 构建命令：`yarn build --mode deploy`
+- 构建命令：`yarn build`
 - 部署目标：GitHub Pages
 
 **注意事项：**

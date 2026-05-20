@@ -20,5 +20,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "src/styles/index.d.ts"]
+  "include": ["src"]
 }
