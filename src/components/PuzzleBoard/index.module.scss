@@ -1,3 +1,10 @@
+:root {
+  --puzzle-piece-size: 100px;
+  --puzzle-gap: 6px;
+  --pieces-area-width: 200px;
+  --pieces-area-height: 450px;
+}
+
 .board {
   display: flex;
   flex-direction: column;
@@ -9,7 +16,6 @@
   -webkit-user-select: none;
   width: 100%;
   box-sizing: border-box;
-  touch-action: none;
   align-items: center;
 }
 
@@ -24,6 +30,7 @@
   display: flex;
   justify-content: center;
   flex-shrink: 0;
+  touch-action: none;
 }
 
 .grid {
@@ -33,6 +40,8 @@
   box-shadow: $shadow-md;
   border: 2px dashed $border-color;
   flex-shrink: 0;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .slot {
@@ -41,6 +50,7 @@
   background: rgba(255, 255, 255, 0.6);
   border-radius: $radius-sm;
   transition: all 0.2s ease;
+  touch-action: none;
 
   &.slotFilled {
     border-color: transparent;
@@ -56,26 +66,30 @@
 
 .piecesArea {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   position: relative;
-  width: 140px;
-  height: 300px;
+  width: var(--pieces-area-width);
+  height: var(--pieces-area-height);
   background: transparent;
   border-radius: $radius-md;
   border: 2px dashed $border-color;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
   scrollbar-width: thin;
   padding: 16px;
   background-color: #fff;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .piecesGrid {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: calc(100% - 32px);
 }
 
 .piece {
@@ -88,6 +102,8 @@
     z-index 0s linear;
   will-change: transform;
   border: 2px solid rgba(255, 255, 255, 0.8);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 
   img {
     width: 100%;
@@ -97,19 +113,24 @@
     pointer-events: none;
     user-select: none;
     border-radius: 6px;
+    touch-action: none;
   }
 
   &.placedPiece {
     position: absolute;
     cursor: grab;
+    cursor: -webkit-grab;
     transition:
       transform 0.2s ease,
       box-shadow 0.2s ease;
+    touch-action: manipulation;
   }
 
   &.draggable {
-    position: absolute;
+    position: relative;
     cursor: grab;
+    cursor: -webkit-grab;
+    touch-action: manipulation;
 
     &:hover {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -119,6 +140,7 @@
 
     &:active {
       cursor: grabbing;
+      cursor: -webkit-grabbing;
     }
 
     &.dragging {
@@ -179,26 +201,128 @@
   .piecesArea {
     width: 100%;
     max-width: 480px;
+    height: 120px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: flex-start;
   }
 
   .piecesGrid {
-    justify-content: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    width: max-content;
+    height: 100%;
+    align-items: center;
+    align-content: unset;
   }
 }
 
-@include respond-to("sm") {
+@include respond-to("md") {
+  :root {
+    --puzzle-piece-size: 60px;
+    --pieces-area-width: 100%;
+    --pieces-area-height: 140px;
+  }
+
   .board {
     padding: 16px;
     gap: 16px;
+    min-height: auto;
+  }
+
+  .gameArea {
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .piecesArea {
+    width: 100%;
+    height: var(--pieces-area-height);
+    min-height: 120px;
+    max-height: 160px;
+    order: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: flex-start;
+    touch-action: none;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .piecesGrid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    width: max-content;
+    height: 100%;
+    align-items: center;
+    align-content: unset;
+  }
+
+  .gridArea {
+    order: 2;
+    width: 100%;
   }
 
   .grid {
     border-width: 1px;
+    margin: 0 auto;
+  }
+
+  .progress {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+@include respond-to("sm") {
+  :root {
+    --puzzle-piece-size: 55px;
+  }
+
+  .board {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .piecesArea {
+    height: 110px;
+    min-height: 110px;
+    padding: 8px;
+    border-width: 1px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: flex-start;
+    touch-action: none;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
 
   .piecesGrid {
-    gap: 6px;
-    padding: 12px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    gap: 8px;
+    width: max-content;
+    height: 100%;
+    align-items: center;
+    align-content: unset;
+  }
+
+  .progress {
+    font-size: 12px;
+    padding: 6px 10px;
+    margin-bottom: 8px;
+  }
+
+  .progressBar {
+    height: 5px;
+  }
+
+  .grid {
+    border-width: 1px;
   }
 }
 

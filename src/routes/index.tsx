@@ -1,4 +1,5 @@
-import { createHashRouter, Navigate } from 'react-router-dom';
+import { createHashRouter } from 'react-router-dom';
+import { WelcomePage } from '../pages/Welcome';
 import { HomePage } from '../pages/HomePage';
 import { PlayPage } from '../pages/PlayPage';
 import { ListPage } from '../pages/ListPage';
@@ -11,7 +12,7 @@ export const router = createHashRouter(
   [
     {
       path: '/',
-      element: <Navigate to="/create" replace />,
+      element: <WelcomePage />,
       errorElement: <ErrorFallback />,
     },
     {

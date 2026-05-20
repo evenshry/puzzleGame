@@ -275,6 +275,12 @@
   }
 }
 
+@include respond-to("md") {
+  .main {
+    padding: 0 $spacing-md $spacing-xl;
+  }
+}
+
 @include respond-to('sm') {
   .header {
     padding: $spacing-xl $spacing-lg;
@@ -319,5 +325,9 @@
 
   .backBtn {
     flex: 1;
+  }
+
+  .main {
+    padding: 0 $spacing-sm $spacing-lg;
   }
 }

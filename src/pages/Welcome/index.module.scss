@@ -1,0 +1,252 @@
+.welcome {
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba($primary-light, 0.4) 0%, $bg-color 50%);
+}
+
+.hero {
+  position: relative;
+  padding: $spacing-xxl $spacing-lg;
+  text-align: center;
+  overflow: hidden;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+}
+
+.logoWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+}
+
+.logoIcon {
+  width: 64px;
+  height: 64px;
+  color: $primary-color;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+.sparkle {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  color: $secondary-color;
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 700;
+  color: $text-primary;
+  font-family: $font-family-display;
+  margin: 0 0 $spacing-sm;
+}
+
+.subtitle {
+  font-size: 20px;
+  color: $primary-color;
+  font-family: $font-family-handwrite;
+  margin: 0 0 $spacing-lg;
+}
+
+.description {
+  font-size: 16px;
+  color: $text-secondary;
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.heroDecoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floatingHeart {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgba($primary-color, 0.2);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  animation: float 4s ease-in-out infinite;
+
+  &:nth-child(1) {
+    left: 10%;
+    top: 30%;
+    animation-delay: 0s;
+  }
+
+  &:nth-child(2) {
+    right: 15%;
+    top: 20%;
+    animation-delay: 1.5s;
+  }
+
+  &:nth-child(3) {
+    left: 20%;
+    bottom: 20%;
+    animation-delay: 3s;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: rotate(-45deg) translateY(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: rotate(-45deg) translateY(-20px);
+    opacity: 0.6;
+  }
+}
+
+.features {
+  padding: $spacing-xl $spacing-lg;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0 0 $spacing-xxl;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-xl;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xxl $spacing-lg;
+  background: $bg-paper;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  border: none;
+  cursor: pointer;
+  transition: all $transition-normal;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+.cardIcon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($primary-light, 0.3) 100%);
+  border-radius: $radius-md;
+  color: $primary-color;
+  margin-bottom: $spacing-lg;
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0 0 $spacing-sm;
+}
+
+.cardDescription {
+  font-size: 14px;
+  color: $text-secondary;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.cardArrow {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  font-size: 20px;
+  color: $primary-color;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all $transition-fast;
+
+  .card:hover & {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.footer {
+  text-align: center;
+  padding: $spacing-xl;
+  font-size: 12px;
+  color: $text-muted;
+}
+
+@media (max-width: 576px) {
+  .hero {
+    padding: $spacing-xl $spacing-lg;
+  }
+
+  .logoIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+  }
+
+  .cardGrid {
+    gap: $spacing-lg;
+  }
+
+  .card {
+    padding: $spacing-xl $spacing-md;
+  }
+}

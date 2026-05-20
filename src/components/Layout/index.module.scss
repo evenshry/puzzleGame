@@ -103,7 +103,27 @@
   color: $text-muted;
 }
 
-@media (max-width: 576px) {
+@include respond-to("md") {
+  .main {
+    padding: 0 $spacing-md $spacing-xl;
+  }
+
+  .modeSelector {
+    max-width: 100%;
+    gap: $spacing-xs;
+  }
+
+  .modeBtn {
+    padding: $spacing-sm;
+    font-size: 13px;
+
+    span {
+      display: none;
+    }
+  }
+}
+
+@include respond-to("sm") {
   .header {
     padding: $spacing-xl $spacing-lg;
   }
@@ -119,5 +139,13 @@
 
   .modeSelector {
     margin-bottom: $spacing-lg;
+  }
+
+  .main {
+    padding: 0 $spacing-sm $spacing-lg;
+  }
+
+  .footer {
+    padding: $spacing-lg;
   }
 }

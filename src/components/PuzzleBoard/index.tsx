@@ -25,6 +25,35 @@ function generatePuzzleId(config: PuzzleConfig): string {
   return `puzzle-${config.text}-${config.difficulty}-${config.backgroundColor}-${config.textColor}-${config.backgroundImage?.length || 0}`;
 }
 
+function useResponsivePieceSize(gridSize: number): number {
+  const [pieceSize, setPieceSize] = useState(100);
+
+  useEffect(() => {
+    const updateSize = () => {
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      
+      if (screenWidth <= 576) {
+        const maxWidth = Math.floor((screenWidth - 48) / gridSize);
+        const maxHeight = Math.floor((screenHeight - 200) / gridSize);
+        setPieceSize(Math.max(45, Math.min(maxWidth, maxHeight)));
+      } else if (screenWidth <= 768) {
+        const maxWidth = Math.floor((screenWidth - 40) / gridSize);
+        const maxHeight = Math.floor((screenHeight - 180) / gridSize);
+        setPieceSize(Math.max(50, Math.min(maxWidth, maxHeight)));
+      } else {
+        setPieceSize(100);
+      }
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, [gridSize]);
+
+  return pieceSize;
+}
+
 interface PuzzleBoardProps {
   puzzleData: PuzzleData;
   puzzleId?: string;
@@ -34,9 +63,7 @@ interface PuzzleBoardProps {
   testCelebration?: boolean;
 }
 
-const DISPLAY_SIZE = 100;
-
-const DroppableSlot = memo(function DroppableSlot({ slot, gridSize }: { slot: PuzzleSlot; gridSize: number }) {
+const DroppableSlot = memo(function DroppableSlot({ slot, gridSize, pieceSize }: { slot: PuzzleSlot; gridSize: number; pieceSize: number }) {
   const { setNodeRef, isOver } = useDroppable({
     id: `slot-${slot.index}`,
   });
@@ -47,10 +74,10 @@ const DroppableSlot = memo(function DroppableSlot({ slot, gridSize }: { slot: Pu
       id={`slot-${slot.index}`}
       className={`${styles.slot} ${slot.pieceId !== null ? styles.slotFilled : ""} ${isOver ? styles.slotHighlight : ""}`}
       style={{
-        left: (slot.index % gridSize) * DISPLAY_SIZE,
-        top: Math.floor(slot.index / gridSize) * DISPLAY_SIZE,
-        width: DISPLAY_SIZE,
-        height: DISPLAY_SIZE,
+        left: (slot.index % gridSize) * pieceSize,
+        top: Math.floor(slot.index / gridSize) * pieceSize,
+        width: pieceSize,
+        height: pieceSize,
       }}
     />
   );
@@ -60,12 +87,12 @@ const SortablePiece = memo(function SortablePiece({
   piece,
   isDragging,
   gridSize,
-  stackIndex = 0,
+  pieceSize,
 }: {
   piece: PuzzlePiece;
   isDragging: boolean;
   gridSize: number;
-  stackIndex?: number;
+  pieceSize: number;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: piece.id });
 
@@ -78,31 +105,27 @@ const SortablePiece = memo(function SortablePiece({
       transform: CSS.Transform.toString(transform),
       transition,
       opacity: isDragging ? 0 : 1,
-      left: ((piece.currentIndex || 0) % gridSize) * DISPLAY_SIZE,
-      top: Math.floor((piece.currentIndex || 0) / gridSize) * DISPLAY_SIZE,
-      width: DISPLAY_SIZE,
-      height: DISPLAY_SIZE,
+      left: ((piece.currentIndex || 0) % gridSize) * pieceSize,
+      top: Math.floor((piece.currentIndex || 0) / gridSize) * pieceSize,
+      width: pieceSize,
+      height: pieceSize,
       position: "absolute",
       cursor: "grab",
       zIndex: isDragging ? 100 : 10,
     };
   } else {
-    const offsetX = stackIndex * 1;
-    const shadowDepth = 2 + stackIndex * 1.5;
-
     style = {
       transform: CSS.Transform.toString(transform),
       transition,
       opacity: isDragging ? 0.5 : 1,
-      width: DISPLAY_SIZE - stackIndex * 2,
-      height: DISPLAY_SIZE - stackIndex * 2,
+      width: pieceSize,
+      height: pieceSize,
       cursor: "grab",
-      position: "absolute" as const,
-      left: offsetX,
-      bottom: stackIndex * 8,
-      boxShadow: `${shadowDepth}px ${shadowDepth}px ${shadowDepth * 2}px rgba(0, 0, 0, 0.15)`,
-      zIndex: stackIndex + 1,
+      position: "relative" as const,
+      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+      zIndex: isDragging ? 100 : 1,
       borderRadius: "8px",
+      flexShrink: 0,
     };
   }
 
@@ -115,13 +138,13 @@ const SortablePiece = memo(function SortablePiece({
   );
 });
 
-const FloatingPiece = memo(function FloatingPiece({ piece }: { piece: PuzzlePiece }) {
+const FloatingPiece = memo(function FloatingPiece({ piece, pieceSize }: { piece: PuzzlePiece; pieceSize: number }) {
   return (
     <div
       className={`${styles.piece} ${styles.floatingPiece}`}
       style={{
-        width: DISPLAY_SIZE,
-        height: DISPLAY_SIZE,
+        width: pieceSize,
+        height: pieceSize,
       }}
     >
       <img src={piece.imageData} alt={`碎片 ${piece.id + 1}`} draggable={false} />
@@ -157,6 +180,7 @@ const PuzzleBoard = memo(function PuzzleBoard({
   const [activeId, setActiveId] = useState<number | null>(null);
 
   const gridSize = puzzleData.gridSize;
+  const pieceSize = useResponsivePieceSize(gridSize);
 
   const handleRemoveFirework = useCallback((id: string) => {
     setFireworks((prev) => prev.filter((f) => f.id !== id));
@@ -255,8 +279,8 @@ const PuzzleBoard = memo(function PuzzleBoard({
       ...piece,
       currentIndex: null,
       position: {
-        x: padding + (i % piecesPerRow) * (DISPLAY_SIZE + gap),
-        y: padding + Math.floor(i / piecesPerRow) * (DISPLAY_SIZE + gap),
+        x: padding + (i % piecesPerRow) * (pieceSize + gap),
+        y: padding + Math.floor(i / piecesPerRow) * (pieceSize + gap),
       },
     }));
 
@@ -268,7 +292,7 @@ const PuzzleBoard = memo(function PuzzleBoard({
       await clearProgress(resolvedPuzzleId);
     };
     clear();
-  }, [puzzleData, resolvedPuzzleId, gridSize]);
+  }, [puzzleData, resolvedPuzzleId, gridSize, pieceSize]);
 
   useEffect(() => {
     const save = async () => {
@@ -284,6 +308,7 @@ const PuzzleBoard = memo(function PuzzleBoard({
       activationConstraint: {
         distance: 8,
       },
+      pointerTypes: ['mouse', 'touch'],
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -329,14 +354,13 @@ const PuzzleBoard = memo(function PuzzleBoard({
           if (!existingPiece) return;
 
           if (piece.currentIndex === null) {
-            const gridSize = Math.sqrt(piece.total);
             const piecesPerRow = gridSize;
             const gap = 6;
             const padding = 16;
 
             const availableIndex = pieces.filter((p) => p.currentIndex === null).findIndex((p) => p.id === id);
-            const newX = padding + (availableIndex % piecesPerRow) * (DISPLAY_SIZE + gap);
-            const newY = padding + Math.floor(availableIndex / piecesPerRow) * (DISPLAY_SIZE + gap);
+            const newX = padding + (availableIndex % piecesPerRow) * (pieceSize + gap);
+            const newY = padding + Math.floor(availableIndex / piecesPerRow) * (pieceSize + gap);
 
             setPieces((prev) =>
               prev.map((p) => {
@@ -447,21 +471,21 @@ const PuzzleBoard = memo(function PuzzleBoard({
           <div className={styles.gameArea}>
             <div className={styles.piecesArea}>
               <div className={styles.piecesGrid}>
-                {availablePieces.map((piece, index) => (
-                  <SortablePiece key={piece.id} piece={piece} isDragging={activeId === piece.id} gridSize={gridSize} stackIndex={index} />
+                {availablePieces.map((piece) => (
+                  <SortablePiece key={piece.id} piece={piece} isDragging={activeId === piece.id} gridSize={gridSize} pieceSize={pieceSize} />
                 ))}
               </div>
             </div>
 
             <SortableContext items={allPieceIds} strategy={verticalListSortingStrategy}>
               <div className={styles.gridArea}>
-                <div className={styles.grid} style={{ width: gridSize * DISPLAY_SIZE, height: gridSize * DISPLAY_SIZE }}>
+                <div className={styles.grid} style={{ width: gridSize * pieceSize, height: gridSize * pieceSize }}>
                   {slots.map((slot) => (
-                    <DroppableSlot key={`slot-${slot.index}`} slot={slot} gridSize={gridSize} />
+                    <DroppableSlot key={`slot-${slot.index}`} slot={slot} gridSize={gridSize} pieceSize={pieceSize} />
                   ))}
 
                   {placedPieces.map((piece) => (
-                    <SortablePiece key={piece.id} piece={piece} isDragging={activeId === piece.id} gridSize={gridSize} />
+                    <SortablePiece key={piece.id} piece={piece} isDragging={activeId === piece.id} gridSize={gridSize} pieceSize={pieceSize} />
                   ))}
                 </div>
               </div>
@@ -469,7 +493,7 @@ const PuzzleBoard = memo(function PuzzleBoard({
           </div>
         </div>
 
-        <DragOverlay>{activePiece && <FloatingPiece piece={activePiece} />}</DragOverlay>
+        <DragOverlay>{activePiece && <FloatingPiece piece={activePiece} pieceSize={pieceSize} />}</DragOverlay>
       </DndContext>
     </>
   );
