@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, memo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, RotateCcw, Sparkles } from 'lucide-react';
 import { PuzzleConfig, CelebrationParticle } from '@/types';
 import { CELEBRATION_COLORS } from '@/utils/puzzle';
@@ -10,6 +11,7 @@ interface ResultScreenProps {
 }
 
 const ResultScreen = memo(function ResultScreen({ config, onRestart }: ResultScreenProps) {
+  const navigate = useNavigate();
   const [particles, setParticles] = useState<CelebrationParticle[]>([]);
   const [showContent, setShowContent] = useState(false);
 
@@ -67,8 +69,8 @@ const ResultScreen = memo(function ResultScreen({ config, onRestart }: ResultScr
   }, [onRestart]);
 
   const handleCreateNew = useCallback(() => {
-    window.location.href = '/';
-  }, []);
+    navigate('/create');
+  }, [navigate]);
 
   return (
     <div className={styles.overlay}>

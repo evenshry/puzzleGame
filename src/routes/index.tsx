@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createHashRouter, Navigate } from 'react-router-dom';
 import { HomePage } from '../pages/HomePage';
 import { PlayPage } from '../pages/PlayPage';
 import { ListPage } from '../pages/ListPage';
@@ -7,7 +7,7 @@ import { EditPage } from '../pages/EditPage';
 
 const basename = import.meta.env.PROD ? '/puzzleGame' : '/';
 
-export const router = createBrowserRouter(
+export const router = createHashRouter(
   [
     {
       path: '/',
@@ -57,7 +57,7 @@ function ErrorFallback() {
       <h1>出错了</h1>
       <p>页面不存在或发生了错误</p>
       <button
-        onClick={() => window.location.href = `${basename}/create`}
+        onClick={() => window.location.href = `${basename}#/create`}
         style={{
           padding: '0.75rem 1.5rem',
           backgroundColor: '#1677ff',

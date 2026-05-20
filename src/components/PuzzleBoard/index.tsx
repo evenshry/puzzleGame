@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, memo, useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   DndContext,
   DragOverlay,
@@ -136,6 +137,7 @@ const PuzzleBoard = memo(function PuzzleBoard({
   showCelebration = false,
   testCelebration = false,
 }: PuzzleBoardProps) {
+  const navigate = useNavigate();
   const [fireworks, setFireworks] = useState<Firework[]>([]);
   const [showContent, setShowContent] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -236,8 +238,8 @@ const PuzzleBoard = memo(function PuzzleBoard({
   }, [onRestart]);
 
   const handleCreateNew = useCallback(() => {
-    window.location.href = "/";
-  }, []);
+    navigate('/create');
+  }, [navigate]);
 
   useEffect(() => {
     setIsInitialized(false);

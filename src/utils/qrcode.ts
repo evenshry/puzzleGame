@@ -46,10 +46,10 @@ const validatePuzzleConfig = (data: unknown): data is PuzzleConfig => {
 export const generateShareURL = (config: PuzzleConfig): string => {
   try {
     const data = JSON.stringify(config);
-    const encodedData = btoa(data);
+    const encodedData = btoa(encodeURIComponent(data));
     const baseURL = window.location.origin;
     const basePath = import.meta.env.PROD ? '/puzzleGame' : '';
-    return `${baseURL}${basePath}/play?share=${encodedData}`;
+    return `${baseURL}${basePath}/#/play?share=${encodedData}`;
   } catch (error) {
     console.error('Failed to generate share URL:', error);
     throw new Error('分享链接生成失败');
@@ -59,11 +59,11 @@ export const generateShareURL = (config: PuzzleConfig): string => {
 export const parseShareURL = (): PuzzleConfig | null => {
   try {
     const params = new URLSearchParams(window.location.search);
-    const puzzleParam = params.get('puzzle');
+    const shareParam = params.get('share');
 
-    if (!puzzleParam) return null;
+    if (!shareParam) return null;
 
-    const decodedData = decodeURIComponent(atob(puzzleParam));
+    const decodedData = decodeURIComponent(atob(shareParam));
     return parseQRCodeData(decodedData);
   } catch {
     return null;
