@@ -234,6 +234,34 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
     };
   };
 
+  const tokenizeText = (text: string): string[] => {
+    const tokens: string[] = [];
+    let i = 0;
+    const len = text.length;
+
+    while (i < len) {
+      const char = text[i];
+      
+      if (/[\u4e00-\u9fa5]/.test(char)) {
+        tokens.push(char);
+        i++;
+      } else if (/[a-zA-Z]/.test(char)) {
+        let word = char;
+        i++;
+        while (i < len && /[a-zA-Z]/.test(text[i])) {
+          word += text[i];
+          i++;
+        }
+        tokens.push(word);
+      } else {
+        tokens.push(char);
+        i++;
+      }
+    }
+
+    return tokens;
+  };
+
   const wrapTextToLines = (
     ctx: CanvasRenderingContext2D,
     text: string,
@@ -250,24 +278,25 @@ export default function CreatePuzzle({ onGenerate, onStartPuzzle }: CreatePuzzle
         return;
       }
 
-      const chars = paragraph.split("");
+      const tokens = tokenizeText(paragraph);
       let currentLine = "";
       let currentWidth = 0;
 
-      chars.forEach((char) => {
-        const charWidth = ctx.measureText(char).width;
+      tokens.forEach((token) => {
+        const tokenWidth = ctx.measureText(token).width;
 
-        if (currentWidth + charWidth > maxWidth && currentLine !== "") {
+        if (currentWidth + tokenWidth > maxWidth && currentLine !== "") {
+          const trimmedLine = currentLine.trimEnd();
           lines.push({
-            text: currentLine,
-            width: ctx.measureText(currentLine).width,
+            text: trimmedLine,
+            width: ctx.measureText(trimmedLine).width,
             align: "left",
           });
-          currentLine = char;
-          currentWidth = charWidth;
+          currentLine = token;
+          currentWidth = tokenWidth;
         } else {
-          currentLine += char;
-          currentWidth += charWidth;
+          currentLine += token;
+          currentWidth += tokenWidth;
         }
       });
 

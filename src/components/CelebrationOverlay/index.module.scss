@@ -166,7 +166,9 @@
   color: $text-primary;
   line-height: 1.5;
   margin: 0;
-  word-wrap: break-word;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  hyphens: none;
 }
 
 .celebrationActions {
