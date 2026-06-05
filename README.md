@@ -149,6 +149,8 @@ VITE_API_BASE_URL=your_api_url
 
 项目已配置 GitHub Actions 自动部署，推送到 `main` 分支后自动构建并部署到 GitHub Pages。
 
+访问地址 https://evenshry.github.io/puzzleGame/
+
 **配置步骤：**
 
 1. 在 GitHub 仓库的 Settings → Pages 中，设置 Source 为 `GitHub Actions`
