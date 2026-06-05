@@ -54,3 +54,4 @@ react-env.d.ts
 # Git
 *.orig
 *.bak
+.yarn
